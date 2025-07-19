@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Caixa | Casa de Oração - CRE</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <img src="assets/logo-cre.png" alt="Logo CRE" class="logo">
+    <h2 style="text-align: center;">NOSSO CAFÉ - CONTROLE DE CAIXA</h2>
+
+    <div class="accordion">
+      <button class="accordion-btn">VER LISTA DE PRODUTOS</button>
+      <div class="panel">
+        <ul id="lista-produtos"></ul>
+      </div>
+
+      <button class="accordion-btn">REGISTRAR VENDA</button>
+      <div class="panel">
+        <form id="venda-form">
+          <label>Produto:<br>
+            <input type="text" id="produto" list="lista-produto" required>
+            <datalist id="lista-produto"></datalist>
+          </label><br>
+          <label>Valor (R$):<br>
+            <input type="number" id="valor" step="0.01" required>
+          </label><br>
+          <label>Forma de Pagamento:<br>
+            <select id="forma">
+              <option>Cartão Débito</option>
+              <option>Cartão Crédito</option>
+              <option>PIX</option>
+              <option>Dinheiro</option>
+            </select>
+          </label><br>
+          <button type="submit">Registrar</button>
+        </form>
+        <p id="mensagem-sucesso"></p>
+      </div>
+
+      <button class="accordion-btn">RELATÓRIO DE VENDAS</button>
+      <div class="panel">
+        <p>Ao clicar abaixo, você atualiza os valores totais de vendas por forma de pagamento:</p>
+        <div style="text-align: center;">
+        <button id="btn-gerar-relatorio" class="btn-primario">📊 Atualizar Relatório</button>
+        <button id="btn-baixar-pdf" class="btn-primario">📥 Baixar Relatório (Excel)</button>
+        </div>
+        <pre id="relatorio"></pre>
+      </div>
+
+      <button class="accordion-btn">GERENCIAR PRODUTOS</button>
+      <div class="panel">
+        <form id="form-produto">
+          <label>Nome:<br>
+            <input type="text" id="nome-produto" required>
+          </label><br>
+          <label>Preço (R$):<br>
+            <input type="number" id="preco-produto" step="0.01" required>
+          </label><br>
+          <button type="submit">Adicionar ou Atualizar</button>
+        </form>
+        <p id="mensagem-produto"></p>
+        <h4>Lista de Produtos:</h4>
+        <ul id="lista-gerenciar"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts ao final -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
