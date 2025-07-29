@@ -1,5 +1,5 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto', sans-serif;
   background-color: #f5f8fb;
   margin: 0;
   padding: 0;
@@ -59,7 +59,7 @@ h1 {
 }
 
 form input, form select {
-  width: 100%;
+  width: 95%;
   padding: 0.5em;
   margin-top: 5px;
   margin-bottom: 10px;
@@ -154,4 +154,63 @@ form button {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+
+.tabela-produtos {
+  border-collapse: collapse;
+  font-family: 'Roboto', sans-serif;
+  background-color: white;
+}
+
+.tabela-produtos th,
+.tabela-produtos td {
+  border: 1px solid #ccc;
+  padding: 8px;
+
+}
+
+.tabela-produtos th {
+  background-color: #00509e;
+  color: white;
+}
+
+.linha-par {
+  background-color: #f9f9f9;
+}
+
+.linha-impar {
+  background-color: #ffffff;
+}
+
+
+.formulario-venda label {
+  display: block;
+  margin-bottom: 10px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.formulario-venda input,
+.formulario-venda select,
+.formulario-venda button {
+  width: 100%;
+  max-width: 535px;
+  padding: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  margin-top: 5px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .tabela-produtos {
+    margin-left: -14%;
+    width: 110%;
+
+  }
+
+  #relatorio {
+      font-family: 'Roboto', sans-serif;
+
+  }
 }

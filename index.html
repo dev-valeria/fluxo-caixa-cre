@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <title>Caixa | Casa de Oração - CRE</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -19,30 +20,36 @@
 
       <button class="accordion-btn">REGISTRAR VENDA</button>
       <div class="panel">
-        <form id="venda-form">
-          <label>Produto:<br>
-            <input type="text" id="produto" list="lista-produto" required>
-            <datalist id="lista-produto"></datalist>
-          </label><br>
-          <label>Valor (R$):<br>
-            <input type="number" id="valor" step="0.01" required>
-          </label><br>
-          <label>Forma de Pagamento:<br>
-            <select id="forma">
-              <option>Cartão Débito</option>
-              <option>Cartão Crédito</option>
-              <option>PIX</option>
-              <option>Dinheiro</option>
-            </select>
-          </label><br>
-          <button type="submit">Registrar</button>
-        </form>
-        <p id="mensagem-sucesso"></p>
+        <form id="venda-form" class="formulario-venda">
+  <label>Produto:<br>
+    <input type="text" id="produto" list="lista-produto" required>
+    <datalist id="lista-produto"></datalist>
+  </label><br>
+  <label>Valor (R$):<br>
+    <input type="number" id="valor" step="0.01" required>
+  </label><br>
+  <label>Quantidade:<br>
+    <input type="number" id="quantidade" min="1" required>
+  </label><br>
+  <label>Valor Total (R$):<br>
+    <input type="number" id="valor-total" step="0.01" required>
+  </label><br>
+  <label>Forma de Pagamento:<br>
+    <select id="forma">
+      <option>Cartão Débito</option>
+      <option>Cartão Crédito</option>
+      <option>PIX</option>
+      <option>Dinheiro</option>
+    </select>
+  </label><br>
+  <button type="submit">Registrar</button>
+</form>
+<p id="mensagem-sucesso"></p>
       </div>
 
       <button class="accordion-btn">RELATÓRIO DE VENDAS</button>
       <div class="panel">
-        <p>Ao clicar abaixo, você atualiza os valores totais de vendas por forma de pagamento:</p>
+        <p style="font-family: roboto;text-align: center;font-size: 12px;">Ao clicar abaixo, você atualiza os valores totais de vendas por forma de pagamento:</p>
         <div style="text-align: center;">
         <button id="btn-gerar-relatorio" class="btn-primario">📊 Atualizar Relatório</button>
         <button id="btn-baixar-pdf" class="btn-primario">📥 Baixar Relatório (Excel)</button>

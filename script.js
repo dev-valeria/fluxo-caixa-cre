@@ -96,36 +96,58 @@ let produtos = JSON.parse(localStorage.getItem("produtos") || "[]");
 const renderProdutos = () => {
   const ulExibir = document.getElementById("lista-produtos");
   const ulGerenciar = document.getElementById("lista-gerenciar");
-  ulExibir.innerHTML = "";
-  ulGerenciar.innerHTML = "";
+  ulExibir.innerHTML = ""; // Limpa
 
-  produtos.forEach((p, index) => {
-    const li1 = document.createElement("li");
-    li1.textContent = `${p.nome} - R$${parseFloat(p.preco).toFixed(2)}`;
-    ulExibir.appendChild(li1);
-
-    const li2 = document.createElement("li");
-
-   li2.innerHTML = `
-  <div class="item-produto">
-    <span>${p.nome} - R$${parseFloat(p.preco).toFixed(2)}</span>
-    <span class="icones-acao">
-      <button onclick="editarProduto(${index})" title="Editar" class="btn-icon">✏️</button>
-      <button onclick="excluirProduto(${index})" title="Excluir" class="btn-icon">🗑️</button>
-    </span>
-  </div>
+  const tabela = document.createElement("table");
+tabela.className = "tabela-produtos";
+tabela.innerHTML = `
+  <thead>
+    <tr>
+      <th>Produto</th>
+      <th>Preço</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${produtos.map((p, i) => `
+      <tr class="${i % 2 === 0 ? "linha-par" : "linha-impar"}">
+        <td>${p.nome}</td>
+        <td>R$${parseFloat(p.preco).toFixed(2)}</td>
+      </tr>
+    `).join("")}
+  </tbody>
 `;
+
+const wrapper = document.createElement("div");
+wrapper.className = "tabela-produtos-wrapper";
+wrapper.appendChild(tabela);
+ulExibir.appendChild(wrapper);
+
+  // Parte da lista de gerenciamento (mantida)
+  ulGerenciar.innerHTML = "";
+  produtos.forEach((p, index) => {
+    const li2 = document.createElement("li");
+    li2.innerHTML = `
+      <div class="item-produto">
+        <span>${p.nome} - R$${parseFloat(p.preco).toFixed(2)}</span>
+        <span class="icones-acao">
+          <button onclick="editarProduto(${index})" title="Editar" class="btn-icon">✏️</button>
+          <button onclick="excluirProduto(${index})" title="Excluir" class="btn-icon">🗑️</button>
+        </span>
+      </div>
+    `;
     ulGerenciar.appendChild(li2);
-        const datalist = document.getElementById("lista-produto");
-        if (datalist) {
-    datalist.innerHTML = ""; // limpa antes de adicionar
-    produtos.forEach((p) => {
-        const opt = document.createElement("option");
-        opt.value = p.nome;
-        datalist.appendChild(opt);
-    });
-    }
   });
+
+  // Atualiza datalist
+  const datalist = document.getElementById("lista-produto");
+  if (datalist) {
+    datalist.innerHTML = "";
+    produtos.forEach((p) => {
+      const opt = document.createElement("option");
+      opt.value = p.nome;
+      datalist.appendChild(opt);
+    });
+  }
 };
 
 document.getElementById("form-produto").addEventListener("submit", (e) => {
@@ -169,11 +191,14 @@ function excluirProduto(index) {
 document.getElementById("venda-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const produto = document.getElementById("produto").value;
-  const valor = parseFloat(document.getElementById("valor").value);
+  const quantidade = parseInt(document.getElementById("quantidade").value);
+const valorUnitario = produtos.find(p => p.nome.toLowerCase() === produto.toLowerCase())?.preco || 0;
+const valor = quantidade * valorUnitario;
   const forma = document.getElementById("forma").value;
   const data = new Date().toLocaleString();
+  console.log(valorUnitario, 'valorunitario')
 
-  const venda = { data, produto, valor, forma };
+  const venda = { data, produto, valor, forma, quantidade, valorUnitario };
   let vendas = JSON.parse(localStorage.getItem("vendas") || "[]");
   vendas.push(venda);
   localStorage.setItem("vendas", JSON.stringify(vendas));
@@ -194,16 +219,49 @@ function gerarRelatorio() {
     totalPorForma[v.forma] += v.valor;
   });
 
-  let rel = "📊 RELATÓRIO DE VENDAS\n\n";
-  for (const forma in totalPorForma) {
-    rel += `${forma}: R$${totalPorForma[forma].toFixed(2)}\n`;
+  const agrupado = {};
+  vendas.forEach(v => {
+    if (!agrupado[v.produto]) {
+      agrupado[v.produto] = { quantidade: 0, total: 0, unitario: v.valorUnitario };
+    }
+    agrupado[v.produto].quantidade += v.quantidade;
+    agrupado[v.produto].total += v.valor;
+  });
+
+  // Montar a tabela HTML
+  let rel = `<h2>📊 Relatório de Vendas</h2>`;
+  rel += `<table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width:50%;">`;
+  rel += `<thead>
+    <tr style="background-color: #f2f2f2;">
+      <th>Produto</th>
+      <th>Quantidade</th>
+    </tr>
+  </thead><tbody>`;
+
+  for (const nome in agrupado) {
+    const { quantidade, unitario, total } = agrupado[nome];
+    rel += `<tr>
+      <td>${nome || "—"}</td>
+      <td>${quantidade || 0}</td>
+    </tr>`;
   }
 
-  rel += `\nTotal geral: R$${vendas.reduce((sum, v) => sum + v.valor, 0).toFixed(2)}\n`;
-  rel += `\n🗓️ Período até: ${new Date().toLocaleDateString()}`;
+  rel += `</tbody></table>`;
 
-  document.getElementById("relatorio").textContent = rel;
-  return rel;
+  // Por forma de pagamento
+  rel += `<h3>Forma de Pagamento</h3><ul>`;
+  for (const forma in totalPorForma) {
+    rel += `<li>${forma}: R$ ${totalPorForma[forma].toFixed(2)}</li>`;
+  }
+  rel += `</ul>`;
+
+  // Total geral e data
+  const totalGeral = vendas.reduce((sum, v) => sum + v.valor, 0);
+  rel += `<p><strong>Total Geral:</strong> R$ ${totalGeral.toFixed(2)}</p>`;
+  rel += `<p><strong>Data:</strong> ${new Date().toLocaleDateString()}</p>`;
+
+  // Exibe o HTML no elemento
+  document.getElementById("relatorio").innerHTML = rel;
 }
 
 // ---------------------
@@ -214,27 +272,48 @@ function showMsg(msg, elId) {
 }
 
 // Quando selecionar produto, preencher valor automaticamente
-document.getElementById("produto").addEventListener("input", (e) => {
-  const nomeSelecionado = e.target.value;
+function atualizarValorTotal() {
+  const nomeSelecionado = document.getElementById("produto").value;
+  const quantidade = document.getElementById("quantidade").value;
   const produtoEncontrado = produtos.find(p => p.nome.toLowerCase() === nomeSelecionado.toLowerCase());
+  console.log(produtoEncontrado)
 
   if (produtoEncontrado) {
-    document.getElementById("valor").value = produtoEncontrado.preco;
+    const unit = produtoEncontrado.preco;
+    const total = unit * quantidade;
+    
+    console.log(unit, 'testeunit')
+    console.log(total,'totaaal')
+
+    document.getElementById("valor").value = unit.toFixed(2);
+    document.getElementById("valor-total").value = total.toFixed(2);
+
+  } else if (total === 0) {
+    document.getElementById("valor-total").value = unit.toFixed(2);
+
+  } else {
+        document.getElementById("valor").value = "";
+
   }
-});
+  }
+// Atualiza valor ao mudar o produto
+document.getElementById("produto").addEventListener("input", atualizarValorTotal);
+
+// Atualiza valor ao mudar a quantidade
+document.getElementById("quantidade").addEventListener("input", atualizarValorTotal);
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-baixar-pdf").addEventListener("click", () => {
     const vendas = JSON.parse(localStorage.getItem("vendas") || "[]");
 
     const agrupado = {};
-    vendas.forEach(v => {
-      if (!agrupado[v.produto]) {
-        agrupado[v.produto] = { quantidade: 0, total: 0, unitario: v.valor };
-      }
-      agrupado[v.produto].quantidade++;
-      agrupado[v.produto].total += v.valor;
-    });
+vendas.forEach(v => {
+  if (!agrupado[v.produto]) {
+    agrupado[v.produto] = { quantidade: 0, total: 0, unitario: v.valorUnitario };
+  }
+  agrupado[v.produto].quantidade += v.quantidade;
+  agrupado[v.produto].total += v.valor;
+});
 
     const detalhes = [["Produto", "Quantidade", "Valor Unitário (R$)", "Valor Total (R$)"]];
     for (let prod in agrupado) {
