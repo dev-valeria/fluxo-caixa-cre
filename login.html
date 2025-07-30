@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - CRE</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container-login">
+    <img src="assets/logo-cre.png" alt="Logo CRE" class="logo-cre">
+    <h2>Bem-vindo ao CRE</h2>
+    <p>Digite seu nome para acessar o sistema:</p>
+    <form id="login-form">
+      <input type="text" id="usuario" placeholder="Nome" required>
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("login-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const usuario = document.getElementById("usuario").value.trim();
+      if (usuario) {
+        localStorage.setItem("usuario", usuario);
+        window.location.href = "app.html"; // Redireciona para o sistema
+      }
+    });
+  </script>
+</body>
+</html>
