@@ -121,22 +121,36 @@ const wrapper = document.createElement("div");
 wrapper.className = "tabela-produtos-wrapper";
 wrapper.appendChild(tabela);
 ulExibir.appendChild(wrapper);
+// Parte da lista de gerenciamento (em formato de tabela)
+ulGerenciar.innerHTML = ""; // Limpa
 
-  // Parte da lista de gerenciamento (mantida)
-  ulGerenciar.innerHTML = "";
-  produtos.forEach((p, index) => {
-    const li2 = document.createElement("li");
-    li2.innerHTML = `
-      <div class="item-produto">
-        <span>${p.nome} - R$${parseFloat(p.preco).toFixed(2)}</span>
-        <span class="icones-acao">
+// Criar tabela
+const tabelaGerenciar = document.createElement("table");
+tabelaGerenciar.className = "tabela-produtos-gerenciar";
+tabelaGerenciar.innerHTML = `
+  <thead>
+    <tr>
+      <th>Produto</th>
+      <th>Preço</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${produtos.map((p, index) => `
+      <tr>
+        <td>${p.nome}</td>
+        <td>R$ ${parseFloat(p.preco).toFixed(2)}</td>
+        <td class="icones-acao">
           <button onclick="editarProduto(${index})" title="Editar" class="btn-icon">✏️</button>
           <button onclick="excluirProduto(${index})" title="Excluir" class="btn-icon">🗑️</button>
-        </span>
-      </div>
-    `;
-    ulGerenciar.appendChild(li2);
-  });
+        </td>
+      </tr>
+    `).join("")}
+  </tbody>
+`;
+
+// Adiciona tabela no painel
+ulGerenciar.appendChild(tabelaGerenciar);
 
   // Atualiza datalist
   const datalist = document.getElementById("lista-produto");
@@ -196,12 +210,13 @@ const valorUnitario = produtos.find(p => p.nome.toLowerCase() === produto.toLowe
 const valor = quantidade * valorUnitario;
   const forma = document.getElementById("forma").value;
   const data = new Date().toLocaleString();
-  console.log(valorUnitario, 'valorunitario')
 
   const venda = { data, produto, valor, forma, quantidade, valorUnitario };
   let vendas = JSON.parse(localStorage.getItem("vendas") || "[]");
   vendas.push(venda);
   localStorage.setItem("vendas", JSON.stringify(vendas));
+  console.log(venda)
+
 
   showMsg("✅ Venda registrada!", "mensagem-sucesso");
   document.getElementById("venda-form").reset();
@@ -230,9 +245,10 @@ function gerarRelatorio() {
 
   // Montar a tabela HTML
   let rel = `<h2>📊 Relatório de Vendas</h2>`;
-  rel += `<table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width:50%;">`;
+  rel += `<p><strong>Data:</strong> ${new Date().toLocaleDateString()}</p>`;
+  rel += `<table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width:100%;">`;
   rel += `<thead>
-    <tr style="background-color: #f2f2f2;">
+    <tr style="background-color: #00509e;">
       <th>Produto</th>
       <th>Quantidade</th>
     </tr>
@@ -249,16 +265,27 @@ function gerarRelatorio() {
   rel += `</tbody></table>`;
 
   // Por forma de pagamento
-  rel += `<h3>Forma de Pagamento</h3><ul>`;
-  for (const forma in totalPorForma) {
-    rel += `<li>${forma}: R$ ${totalPorForma[forma].toFixed(2)}</li>`;
-  }
-  rel += `</ul>`;
+ // Por forma de pagamento
+rel += `<h3>Forma de Pagamento</h3>`;
+rel += `<table class="tabela-pagamento">
+          <thead>
+            <tr>
+              <th>Forma</th>
+              <th>Valor (R$)</th>
+            </tr>
+          </thead>
+          <tbody>`;
+for (const forma in totalPorForma) {
+  rel += `<tr>
+            <td>${forma}</td>
+            <td>R$ ${totalPorForma[forma].toFixed(2)}</td>
+          </tr>`;
+}
+rel += `</tbody></table>`;
 
   // Total geral e data
   const totalGeral = vendas.reduce((sum, v) => sum + v.valor, 0);
   rel += `<p><strong>Total Geral:</strong> R$ ${totalGeral.toFixed(2)}</p>`;
-  rel += `<p><strong>Data:</strong> ${new Date().toLocaleDateString()}</p>`;
 
   // Exibe o HTML no elemento
   document.getElementById("relatorio").innerHTML = rel;
@@ -306,33 +333,49 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-baixar-pdf").addEventListener("click", () => {
     const vendas = JSON.parse(localStorage.getItem("vendas") || "[]");
 
-    const agrupado = {};
+const agrupado = {};
 vendas.forEach(v => {
   if (!agrupado[v.produto]) {
-    agrupado[v.produto] = { quantidade: 0, total: 0, unitario: v.valorUnitario };
+    agrupado[v.produto] = { 
+      data: v.data, 
+      forma: v.forma, 
+      quantidade: 0, 
+      total: 0, 
+      unitario: v.valorUnitario 
+    };
   }
   agrupado[v.produto].quantidade += v.quantidade;
   agrupado[v.produto].total += v.valor;
 });
 
-    const detalhes = [["Produto", "Quantidade", "Valor Unitário (R$)", "Valor Total (R$)"]];
-    for (let prod in agrupado) {
-      const info = agrupado[prod];
-      detalhes.push([prod, info.quantidade, info.unitario.toFixed(2), info.total.toFixed(2)]);
-    }
+// Criar array de detalhes
+const detalhes = [["Data", "Forma", "Produto", "Quantidade", "Valor Unitário (R$)", "Valor Total (R$)"]];
+for (let prod in agrupado) {
+  const info = agrupado[prod];
+  detalhes.push([
+    info.data, 
+    info.forma, 
+    prod, 
+    info.quantidade, 
+    info.unitario.toFixed(2), 
+    info.total.toFixed(2)
+  ]);
+}
 
-        const totais = {
-      "Cartão Débito": 0,
-      "Cartão Crédito": 0,
-      "PIX": 0,
-      "Dinheiro": 0
-    };
+// Totais por forma de pagamento
+const totais = {
+  "Cartão Débito": 0,
+  "Cartão Crédito": 0,
+  "PIX": 0,
+  "Dinheiro": 0
+};
 
-    vendas.forEach(v => {
-      if (totais[v.forma] !== undefined) {
-        totais[v.forma] += v.valor;
-      }
-    });
+vendas.forEach(v => {
+  if (totais[v.forma] !== undefined) {
+    totais[v.forma] += v.valor;
+  }
+});
+
 
     const totalGeral = Object.values(totais).reduce((s, v) => s + v, 0);
 
