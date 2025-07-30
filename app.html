@@ -11,6 +11,8 @@
   <div class="container">
     <img src="assets/logo-cre.png" alt="Logo CRE" class="logo">
     <h2 style="text-align: center;">NOSSO CAFÉ - CONTROLE DE CAIXA</h2>
+    <h3 id="bemvindo"></h3>
+<button id="btn-logout" class="btn-sair">Sair</button>
 
     <div class="accordion">
       <button class="accordion-btn">VER LISTA DE PRODUTOS</button>
@@ -47,36 +49,56 @@
 <p id="mensagem-sucesso"></p>
       </div>
 
-      <button class="accordion-btn">RELATÓRIO DE VENDAS</button>
-      <div class="panel">
-        <p style="font-family: roboto;text-align: center;font-size: 12px;">Ao clicar abaixo, você atualiza os valores totais de vendas por forma de pagamento:</p>
-        <div style="text-align: center;">
-        <button id="btn-gerar-relatorio" class="btn-primario">📊 Atualizar Relatório</button>
-        <button id="btn-baixar-pdf" class="btn-primario">📥 Baixar Relatório (Excel)</button>
-        </div>
-        <pre id="relatorio"></pre>
-      </div>
+   <button class="accordion-btn">RELATÓRIO DE VENDAS</button>
+<div class="panel">
+  <!-- RELATÓRIO (fica em cima) -->
+  <div id="relatorio" class="relatorio"></div>
 
-      <button class="accordion-btn">GERENCIAR PRODUTOS</button>
-      <div class="panel">
-        <form id="form-produto">
-          <label>Nome:<br>
-            <input type="text" id="nome-produto" required>
-          </label><br>
-          <label>Preço (R$):<br>
-            <input type="number" id="preco-produto" step="0.01" required>
-          </label><br>
-          <button type="submit">Adicionar ou Atualizar</button>
-        </form>
-        <p id="mensagem-produto"></p>
-        <h4>Lista de Produtos:</h4>
-        <ul id="lista-gerenciar"></ul>
-      </div>
-    </div>
+  <p class="hint">
+    Clique para atualizar os registros de venda:
+  </p>
+
+  <!-- BOTÕES (ficam embaixo) -->
+  <div class="acoes-relatorio">
+    <button id="btn-gerar-relatorio" class="btn-primario">📊 Atualizar Relatório</button>
+    <button id="btn-baixar-pdf" class="btn-primario">📥 Baixar Relatório (Excel)</button>
   </div>
+</div>
+
+<button class="accordion-btn">GERENCIAR PRODUTOS</button>
+<div class="panel">
+  <form id="form-produto">
+    <label>Nome:<br>
+      <input type="text" id="nome-produto" required>
+    </label><br>
+    <label>Preço (R$):<br>
+      <input type="number" id="preco-produto" step="0.01" required>
+    </label><br>
+    <button type="submit">Adicionar ou Atualizar</button>
+  </form>
+  <p id="mensagem-produto"></p>
+  <h4>Lista de Produtos:</h4>
+  
+  <!-- Aqui será injetada a tabela -->
+  <div id="lista-gerenciar"></div>
+</div>
 
   <!-- Scripts ao final -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+  // Protege a rota - só entra se tiver login salvo
+  const usuario = localStorage.getItem("usuario");
+  if (!usuario) {
+    window.location.href = "login.html"; // volta para tela de login
+  }
+</script>
   <script src="script.js"></script>
+  <script>
+  document.getElementById("bemvindo").textContent = `Bem-vindo(a), ${localStorage.getItem("usuario")}!`;
+  document.getElementById("btn-logout").addEventListener("click", () => {
+    localStorage.removeItem("usuario");
+    window.location.href = "login.html";
+  });
+</script>
 </body>
 </html>
