@@ -48,14 +48,22 @@ h1 {
 }
 
 .panel {
-  padding: 0 1em;
+  padding: 1em;
   display: none;
   overflow: hidden;
   background-color: #f0f4f8;
   border-radius: 0 0 4px 4px;
   margin-bottom: 10px;
   transition: max-height 0.3s ease-out;
-  margin-top: 29px;
+  margin-top: 20px;
+}
+
+.hint {
+  font-family: Roboto, sans-serif;
+  text-align: center;
+  font-size: 12px;
+  margin-top: 12px;
+  color: #003366;
 }
 
 form input, form select {
@@ -161,6 +169,32 @@ form button {
   border-collapse: collapse;
   font-family: 'Roboto', sans-serif;
   background-color: white;
+
+  /* Ajuste para desktop */
+  margin: 0 -41px;   /* centraliza horizontalmente */
+  width: 108%;       /* define uma largura */
+}
+
+.tabela-produtos-gerenciar {
+  border-collapse: collapse;
+  font-family: 'Roboto', sans-serif;
+  background-color: white;
+
+  /* Ajuste para desktop */
+  margin: 0 3px;   /* centraliza horizontalmente */
+  width: 100%;       /* define uma largura */
+}
+
+.tabela-produtos-gerenciar th,
+.tabela-produtos-gerenciar td {
+  border: 1px solid #ccc;
+  padding: 8px;
+
+}
+
+.tabela-produtos-gerenciar th {
+  background-color: #00509e;
+  color: white;
 }
 
 .tabela-produtos th,
@@ -200,6 +234,73 @@ form button {
   box-sizing: border-box;
   margin-top: 5px;
 }
+.relatorio {
+   font-family: 'Roboto', sans-serif;
+}
+
+  .relatorio table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.relatorio th, .relatorio td {
+  border: 1px solid #ddd;
+  padding: 6px 8px;
+}
+
+.relatorio thead th {
+  background: #f2f2f2;
+}
+
+.acoes-relatorio {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.container-login {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 20px;
+  background: white;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+}
+
+.container-login input {
+  width: 90%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.container-login button {
+  width: 95%;
+  padding: 10px;
+  background-color: #00509e;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-sair {
+  background: #d9534f;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin: 10px 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-sair:hover {
+  background: #b52b27;
+}
 
 /* Responsivo */
 @media (max-width: 768px) {
@@ -209,8 +310,4 @@ form button {
 
   }
 
-  #relatorio {
-      font-family: 'Roboto', sans-serif;
-
-  }
 }
