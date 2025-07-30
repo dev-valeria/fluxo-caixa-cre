@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro - CRE</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container-login">
+    <h2>Cadastro de Usuário</h2>
+    <form id="cadastro-form">
+      <input type="text" id="usuario" placeholder="Usuário" required>
+      <input type="password" id="senha" placeholder="Senha" required>
+      <button type="submit">Cadastrar</button>
+    </form>
+    <p id="msg" style="color:green; display:none;">Cadastro realizado com sucesso!</p>
+    <p>Já tem conta? <a href="index.html">Voltar ao login</a></p>
+  </div>
+
+  <script>
+    document.getElementById("cadastro-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const usuario = document.getElementById("usuario").value.trim();
+      const senha = document.getElementById("senha").value.trim();
+      const msg = document.getElementById("msg");
+
+      let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+      // Verifica se o usuário já existe
+      if (usuarios.some(u => u.usuario === usuario)) {
+        alert("Usuário já existe! Escolha outro nome.");
+        return;
+      }
+
+      // Adiciona o novo usuário
+      usuarios.push({ usuario, senha });
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+      msg.style.display = "block";
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>
