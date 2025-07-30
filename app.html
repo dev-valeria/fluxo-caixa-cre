@@ -10,9 +10,13 @@
 <body>
   <div class="container">
     <img src="assets/logo-cre.png" alt="Logo CRE" class="logo">
-    <h2 style="text-align: center;">NOSSO CAFÉ - CONTROLE DE CAIXA</h2>
     <h3 id="bemvindo"></h3>
-<button id="btn-logout" class="btn-sair">Sair</button>
+    <h2 style="text-align: center;margin-top: 72px;">NOSSO CAFÉ - CONTROLE DE CAIXA</h2>
+
+     <div class="accordion">
+      <button class="accordion-btn">AVISOS</button>
+      <div class="panel">
+      </div>
 
     <div class="accordion">
       <button class="accordion-btn">VER LISTA DE PRODUTOS</button>
@@ -82,22 +86,45 @@
   <!-- Aqui será injetada a tabela -->
   <div id="lista-gerenciar"></div>
 </div>
-
+<div class="container-sair">
+  <button id="btn-logout" class="btn-sair">Sair</button>
+</div>
   <!-- Scripts ao final -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script>
-  // Protege a rota - só entra se tiver login salvo
-  const usuario = localStorage.getItem("usuario");
-  if (!usuario) {
-    window.location.href = "login.html"; // volta para tela de login
-  }
-</script>
+    <script>
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+    if (!usuarioLogado) {
+      window.location.href = "index.html";
+    } else {
+      document.getElementById("boas-vindas").textContent = `Olá, ${usuarioLogado}! Bem-vindo ao sistema.`;
+    }
+  </script>
   <script src="script.js"></script>
   <script>
-  document.getElementById("bemvindo").textContent = `Bem-vindo(a), ${localStorage.getItem("usuario")}!`;
-  document.getElementById("btn-logout").addEventListener("click", () => {
-    localStorage.removeItem("usuario");
-    window.location.href = "login.html";
+  document.addEventListener("DOMContentLoaded", () => {
+    const usuario = localStorage.getItem("usuarioLogado"); // <-- CORRIGI AQUI
+
+    document.getElementById("bemvindo").innerHTML = usuario 
+  ? `<strong>Bem-vindo(a), ${usuario}!</strong><br><br>
+      O seu trabalho aqui no nosso café é muito importante para nós.<br><br>
+      O café ajuda a pagar o aluguel da cozinha, onde preparamos a sopa para pessoas em situação de rua. 
+      Além disso, é um espaço onde recebemos muitas pessoas em sofrimento, que chegam tristes, 
+      sem esperança e, às vezes, até pensando em tirar a própria vida.<br><br>
+      Ao servir um café, você está acolhendo essas pessoas com carinho e contribuindo para que 
+      encontrem um pouco de conforto. Você também está ajudando indiretamente a alimentar aqueles 
+      que vivem em situação de rua e que dependem do nosso trabalho para, às vezes, fazer a única refeição do dia.<br><br>
+      A caridade que você está praticando aqui será sentida e transformará a vida de muitos que 
+      precisam de atenção, alimento e amor.<br><br>
+      <strong>Que a espiritualidade te encha de amor. Inicie os trabalhos fazendo uma oração.
+        <br> <br>
+        Gratidão!</strong>`
+    : "Bem-vindo(a)!";
+
+
+    document.getElementById("btn-logout").addEventListener("click", () => {
+      localStorage.removeItem("usuarioLogado");
+      window.location.href = "index.html";
+    });
   });
 </script>
 </body>
