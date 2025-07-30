@@ -9,20 +9,33 @@
   <div class="container-login">
     <img src="assets/logo-cre.png" alt="Logo CRE" class="logo-cre">
     <h2>Bem-vindo ao CRE</h2>
-    <p>Digite seu nome para acessar o sistema:</p>
+    <p>Digite seu usuário e senha:</p>
+    
     <form id="login-form">
-      <input type="text" id="usuario" placeholder="Nome" required>
+      <input type="text" id="usuario" placeholder="Usuário" required>
+      <input type="password" id="senha" placeholder="Senha" required>
       <button type="submit">Entrar</button>
     </form>
+    <p id="erro" style="color:red; display:none;">Usuário ou senha inválidos!</p>
+    <p>Não tem conta? <a href="cadastro.html">Cadastre-se</a></p>
   </div>
 
   <script>
     document.getElementById("login-form").addEventListener("submit", (e) => {
       e.preventDefault();
+
       const usuario = document.getElementById("usuario").value.trim();
-      if (usuario) {
-        localStorage.setItem("usuario", usuario);
-        window.location.href = "app.html"; // Redireciona para o sistema
+      const senha = document.getElementById("senha").value.trim();
+      const erro = document.getElementById("erro");
+
+      const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+      const valido = usuarios.find(u => u.usuario === usuario && u.senha === senha);
+
+      if (valido) {
+        localStorage.setItem("usuarioLogado", usuario);
+        window.location.href = "app.html";
+      } else {
+        erro.style.display = "block";
       }
     });
   </script>
