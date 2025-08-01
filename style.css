@@ -1,19 +1,28 @@
+html {
+  height: 100%;
+}
+
 body {
   font-family: 'Roboto', sans-serif;
   background-color: #f5f8fb;
   margin: 0;
   padding: 0;
   color: #003366;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100dvh;
 }
 
 .container {
-  max-width: 600px;
+  max-width: 400px;
   margin: auto;
-  padding: 2em;
+  padding: 20px;
   background: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  margin-top: 2em;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
@@ -260,32 +269,47 @@ form button {
 }
 
 .container-login {
-  max-width: 400px;
-  margin: 80px auto;
-  padding: 20px;
-  background: white;
-  text-align: center;
-  border-radius: 10px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    max-width: 507px;
+    margin: 271px auto;
+    padding: 143px;
+    background: white;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+}
+
+.container-login form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .container-login input {
   width: 90%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  padding: 14px; /* antes era 10px */
+  font-size: 16px;
 }
 
 .container-login button {
-  width: 95%;
-  padding: 10px;
-  background-color: #00509e;
-  border: none;
-  border-radius: 6px;
-  color: white;
+  width: 90%;
+  padding: 14px;
   font-size: 16px;
-  cursor: pointer;
+}
+
+.container-login h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.container-login a {
+  color: #00509e;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.container-login a:hover {
+  text-decoration: underline;
 }
 
 .btn-sair:hover {
@@ -312,7 +336,6 @@ form button {
   .tabela-produtos {
     margin-left: -14%;
     width: 110%;
-
   }
 
 }
