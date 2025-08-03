@@ -1,131 +1,176 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
   <title>Caixa | Casa de Oração - CRE</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .texto-justificado {
+      text-align: justify;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <img src="assets/logo-cre.png" alt="Logo CRE" class="logo">
+    <img src="assets/logo-cre.png" alt="Logo CRE" class="logo" style="margin-top: 28px;" />
     <h3 id="bemvindo"></h3>
-    <h2 style="text-align: center;margin-top: 72px;">NOSSO CAFÉ - CONTROLE DE CAIXA</h2>
+    <h3 style="text-align: center; margin-top: 44px;">NOSSO CAFÉ - CONTROLE DE CAIXA</h3>
 
-     <div class="accordion">
+    <div class="accordion">
       <button class="accordion-btn">AVISOS</button>
       <div class="panel">
+        <div class="texto-justificado">
+          <br /><br />
+          O seu trabalho aqui no nosso café é muito importante para nós.<br /><br />
+          O café ajuda a pagar o aluguel da cozinha, onde preparamos a sopa para pessoas em situação de rua. Além disso, é um espaço onde recebemos muitas pessoas em sofrimento, que chegam tristes, sem esperança e, às vezes, até pensando em tirar a própria vida.<br /><br />
+          Ao servir um café, você está acolhendo essas pessoas com carinho e contribuindo para que encontrem um pouco de conforto. Você também está ajudando indiretamente a alimentar aqueles que vivem em situação de rua e que dependem do nosso trabalho para, às vezes, fazer a única refeição do dia.<br /><br />
+          A caridade que você está praticando aqui será sentida e transformará a vida de muitos que precisam de atenção, alimento e amor.<br /><br />
+          <strong>Que a espiritualidade te encha de amor. Inicie os trabalhos fazendo uma oração.<br /><br />
+          Gratidão!</strong>
+        </div>
       </div>
+    </div>
 
     <div class="accordion">
       <button class="accordion-btn">VER LISTA DE PRODUTOS</button>
       <div class="panel">
         <ul id="lista-produtos"></ul>
       </div>
+    </div>
 
+    <div class="accordion">
       <button class="accordion-btn">REGISTRAR VENDA</button>
       <div class="panel">
         <form id="venda-form" class="formulario-venda">
-  <label>Produto:<br>
-    <input type="text" id="produto" list="lista-produto" required>
-    <datalist id="lista-produto"></datalist>
-  </label><br>
-  <label>Valor (R$):<br>
-    <input type="number" id="valor" step="0.01" required>
-  </label><br>
-  <label>Quantidade:<br>
-    <input type="number" id="quantidade" min="1" required>
-  </label><br>
-  <label>Valor Total (R$):<br>
-    <input type="number" id="valor-total" step="0.01" required>
-  </label><br>
-  <label>Forma de Pagamento:<br>
-    <select id="forma">
-      <option>Cartão Débito</option>
-      <option>Cartão Crédito</option>
-      <option>PIX</option>
-      <option>Dinheiro</option>
-    </select>
-  </label><br>
-  <button type="submit">Registrar</button>
-</form>
-<p id="mensagem-sucesso"></p>
+          <label>Produto:<br />
+            <input type="text" id="produto" list="lista-produto" required />
+            <datalist id="lista-produto"></datalist>
+          </label><br />
+          <label>Valor (R$):<br />
+            <input type="number" id="valor" step="0.01" required />
+          </label><br />
+          <label>Quantidade:<br />
+            <input type="number" id="quantidade" min="1" required />
+          </label><br />
+          <label>Valor Total (R$):<br />
+            <input type="number" id="valor-total" step="0.01" required />
+          </label><br />
+          <label>Forma de Pagamento:<br />
+            <select id="forma">
+              <option>Cartão Débito</option>
+              <option>Cartão Crédito</option>
+              <option>PIX</option>
+              <option>Dinheiro</option>
+            </select>
+          </label><br />
+          <button type="submit">Registrar</button>
+        </form>
+        <p id="mensagem-sucesso"></p>
       </div>
+    </div>
 
-   <button class="accordion-btn">RELATÓRIO DE VENDAS</button>
-<div class="panel">
-  <!-- RELATÓRIO (fica em cima) -->
-  <div id="relatorio" class="relatorio"></div>
+    <div class="accordion">
+      <button class="accordion-btn">RELATÓRIO DE VENDAS</button>
+      <div class="panel">
+        <div id="relatorio" class="relatorio"></div>
+        <p class="hint">Clique para atualizar os registros de venda:</p>
+        <div class="acoes-relatorio">
+          <button id="btn-gerar-relatorio" class="btn-primario">📊 Atualizar Relatório</button>
+          <button id="btn-baixar-pdf" class="btn-primario">📥 Baixar Relatório (Excel)</button>
+        </div>
+      </div>
+    </div>
 
-  <p class="hint">
-    Clique para atualizar os registros de venda:
-  </p>
+    <div class="accordion">
+      <button class="accordion-btn">GERENCIAR PRODUTOS</button>
+      <div class="panel">
+        <form id="form-produto">
+          <label>Nome:<br />
+            <input type="text" id="nome-produto" required />
+          </label><br />
+          <label>Preço (R$):<br />
+            <input type="number" id="preco-produto" step="0.01" required />
+          </label><br />
+          <button type="submit">Adicionar ou Atualizar</button>
+        </form>
+        <p id="mensagem-produto"></p>
+        <h4>Lista de Produtos:</h4>
+        <div id="lista-gerenciar"></div>
+      </div>
+    </div>
 
-  <!-- BOTÕES (ficam embaixo) -->
-  <div class="acoes-relatorio">
-    <button id="btn-gerar-relatorio" class="btn-primario">📊 Atualizar Relatório</button>
-    <button id="btn-baixar-pdf" class="btn-primario">📥 Baixar Relatório (Excel)</button>
+    <div class="container-sair">
+      <button id="btn-logout" class="btn-sair">Sair</button>
+    </div>
+  </div>
+
+  <!-- Modal de confirmação para logout -->
+<div id="modal-logout" class="modal-overlay" style="display: none;">
+  <div class="modal">
+    <p>Tem certeza que deseja sair?</p>
+    <div class="modal-buttons">
+      <button id="confirmar-logout" class="btn-primario">Sim</button>
+      <button id="cancelar-logout" class="btn-cancelar">Cancelar</button>
+    </div>
   </div>
 </div>
 
-<button class="accordion-btn">GERENCIAR PRODUTOS</button>
-<div class="panel">
-  <form id="form-produto">
-    <label>Nome:<br>
-      <input type="text" id="nome-produto" required>
-    </label><br>
-    <label>Preço (R$):<br>
-      <input type="number" id="preco-produto" step="0.01" required>
-    </label><br>
-    <button type="submit">Adicionar ou Atualizar</button>
-  </form>
-  <p id="mensagem-produto"></p>
-  <h4>Lista de Produtos:</h4>
-  
-  <!-- Aqui será injetada a tabela -->
-  <div id="lista-gerenciar"></div>
-</div>
-<div class="container-sair">
-  <button id="btn-logout" class="btn-sair">Sair</button>
-</div>
-  <!-- Scripts ao final -->
+  <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script>
-    const usuarioLogado = localStorage.getItem("usuarioLogado");
-    if (!usuarioLogado) {
-      window.location.href = "index.html";
-    } else {
-      document.getElementById("boas-vindas").textContent = `Olá, ${usuarioLogado}! Bem-vindo ao sistema.`;
-    }
-  </script>
   <script src="script.js"></script>
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const usuario = localStorage.getItem("usuarioLogado"); // <-- CORRIGI AQUI
+    document.addEventListener("DOMContentLoaded", () => {
+      const usuario = localStorage.getItem("usuarioLogado");
 
-    document.getElementById("bemvindo").innerHTML = usuario 
-  ? `<strong>Bem-vindo(a), ${usuario}!</strong><br><br>
-      O seu trabalho aqui no nosso café é muito importante para nós.<br><br>
-      O café ajuda a pagar o aluguel da cozinha, onde preparamos a sopa para pessoas em situação de rua. 
-      Além disso, é um espaço onde recebemos muitas pessoas em sofrimento, que chegam tristes, 
-      sem esperança e, às vezes, até pensando em tirar a própria vida.<br><br>
-      Ao servir um café, você está acolhendo essas pessoas com carinho e contribuindo para que 
-      encontrem um pouco de conforto. Você também está ajudando indiretamente a alimentar aqueles 
-      que vivem em situação de rua e que dependem do nosso trabalho para, às vezes, fazer a única refeição do dia.<br><br>
-      A caridade que você está praticando aqui será sentida e transformará a vida de muitos que 
-      precisam de atenção, alimento e amor.<br><br>
-      <strong>Que a espiritualidade te encha de amor. Inicie os trabalhos fazendo uma oração.
-        <br> <br>
-        Gratidão!</strong>`
-    : "Bem-vindo(a)!";
+      if (!usuario) {
+        window.location.href = "index.html";
+        return;
+      }
 
+      const saudacao = document.getElementById("bemvindo");
+      if (saudacao) {
+        saudacao.innerHTML = `<strong>Bem-vindo(a), ${usuario}!</strong>`;
+      }
 
-    document.getElementById("btn-logout").addEventListener("click", () => {
-      localStorage.removeItem("usuarioLogado");
-      window.location.href = "index.html";
+      const logoutBtn = document.getElementById("btn-logout");
+const modalLogout = document.getElementById("modal-logout");
+const confirmarLogout = document.getElementById("confirmar-logout");
+const cancelarLogout = document.getElementById("cancelar-logout");
+
+logoutBtn?.addEventListener("click", () => {
+  modalLogout.style.display = "flex"; // mostra o modal
+});
+
+confirmarLogout?.addEventListener("click", () => {
+  localStorage.removeItem("usuarioLogado");
+  window.location.href = "index.html";
+});
+
+cancelarLogout?.addEventListener("click", () => {
+  modalLogout.style.display = "none"; // esconde o modal
+});
+
+      const buttons = document.querySelectorAll(".accordion-btn");
+      buttons.forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+          buttons.forEach((otherBtn) => {
+            const otherPanel = otherBtn.nextElementSibling;
+            if (otherPanel !== btn.nextElementSibling) {
+              otherPanel.style.display = "none";
+            }
+          });
+
+          const panel = btn.nextElementSibling;
+          panel.style.display = panel.style.display === "block" ? "none" : "block";
+
+           if (index === 1 && panel.style.display === "block") {
+      renderProdutos();
+    }
+        });
+      });
     });
-  });
-</script>
+  </script>
 </body>
 </html>
