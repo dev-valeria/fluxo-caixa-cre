@@ -1,17 +1,3 @@
-// Accordion
-document.querySelectorAll(".accordion-btn").forEach((btn, index) => {
-  btn.addEventListener("click", function () {
-    this.classList.toggle("active");
-    const panel = this.nextElementSibling;
-    panel.style.display = panel.style.display === "block" ? "none" : "block";
-
-    // Chama renderProdutos quando o botão VER LISTA DE PRODUTOS for clicado
-    if (index === 0) {
-      renderProdutos();
-    }
-  });
-});
-
 // ---------------------
 // Precarrega produtos uma única vez (se ainda não existir no localStorage)
 // ---------------------
@@ -189,7 +175,9 @@ function editarProduto(index) {
   const p = produtos[index];
   document.getElementById("nome-produto").value = p.nome;
   document.getElementById("preco-produto").value = p.preco;
+  document.getElementById("form-produto").scrollIntoView({ behavior: 'smooth' });
 }
+
 
 function excluirProduto(index) {
   if (confirm("Tem certeza que deseja excluir este produto?")) {
@@ -215,8 +203,6 @@ const valor = quantidade * valorUnitario;
   let vendas = JSON.parse(localStorage.getItem("vendas") || "[]");
   vendas.push(venda);
   localStorage.setItem("vendas", JSON.stringify(vendas));
-  console.log(venda)
-
 
   showMsg("✅ Venda registrada!", "mensagem-sucesso");
   document.getElementById("venda-form").reset();
@@ -303,14 +289,10 @@ function atualizarValorTotal() {
   const nomeSelecionado = document.getElementById("produto").value;
   const quantidade = document.getElementById("quantidade").value;
   const produtoEncontrado = produtos.find(p => p.nome.toLowerCase() === nomeSelecionado.toLowerCase());
-  console.log(produtoEncontrado)
 
   if (produtoEncontrado) {
     const unit = produtoEncontrado.preco;
     const total = unit * quantidade;
-    
-    console.log(unit, 'testeunit')
-    console.log(total,'totaaal')
 
     document.getElementById("valor").value = unit.toFixed(2);
     document.getElementById("valor-total").value = total.toFixed(2);
