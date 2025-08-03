@@ -1,42 +1,169 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Login - CRE</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login e Cadastro - CRE</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+    .tabs button {
+      padding: 10px 20px;
+      border: none;
+      background: #e0e0e0;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 6px;
+    }
+
+    .tabs button.active {
+      background: #00509e;
+      color: white;
+    }
+
+    .form-container {
+      display: none;
+    }
+
+    .form-container.active {
+      display: block;
+    }
+  </style>
 </head>
 <body>
   <div class="container-login">
-    <img src="assets/logo-cre.png" alt="Logo CRE" class="logo-cre">
-    <h2>Bem-vindo ao CRE</h2>
-    <p>Digite seu usuário e senha:</p>
-    
-    <form id="login-form">
-      <input type="text" id="usuario" placeholder="Usuário" required>
-      <input type="password" id="senha" placeholder="Senha" required>
-      <button type="submit">Entrar</button>
-    </form>
-    <p id="erro" style="color:red; display:none;">Usuário ou senha inválidos!</p>
-    <p>Não tem conta? <a href="cadastro.html">Cadastre-se</a></p>
+    <div class="login">
+      <img src="assets/logo-cre.png" alt="Logo do CRE" class="logo-cre" />
+      <h1>Centro de Renovação Espiritual</h1>
+
+      <div class="tabs">
+        <button id="btn-login" class="active">Login</button>
+        <button id="btn-cadastro">Cadastro</button>
+      </div>
+
+      <!-- FORM LOGIN -->
+      <div id="form-login" class="form-container active">
+        <p class="subtitulo">Digite seu usuário e senha:</p>
+        <form id="login-form">
+          <input type="text" id="usuarioLogin" placeholder="Usuário" required />
+          <input type="password" id="senhaLogin" placeholder="Senha" required />
+          <button type="submit">Entrar</button>
+        </form>
+        <p id="erroLogin" class="erro-login" style="display: none;">Usuário ou senha inválidos!</p>
+      </div>
+
+      <!-- FORM CADASTRO -->
+      <div id="form-cadastro" class="form-container">
+        <p class="subtitulo">Crie sua conta para acessar:</p>
+        <form id="cadastro-form">
+          <input type="text" id="usuarioCadastro" placeholder="Novo usuário" required />
+          <input type="password" id="senhaCadastro" placeholder="Nova senha" required />
+          <button type="submit">Cadastrar</button>
+        </form>
+        <p id="msgCadastro" class="mensagem"></p>
+      </div>
+    </div>
   </div>
 
   <script>
-    document.getElementById("login-form").addEventListener("submit", (e) => {
+    // Alternância entre abas
+    const btnLogin = document.getElementById("btn-login");
+    const btnCadastro = document.getElementById("btn-cadastro");
+    const formLogin = document.getElementById("form-login");
+    const formCadastro = document.getElementById("form-cadastro");
+
+    btnLogin.addEventListener("click", () => {
+      btnLogin.classList.add("active");
+      btnCadastro.classList.remove("active");
+      formLogin.classList.add("active");
+      formCadastro.classList.remove("active");
+      document.getElementById("usuarioLogin").value = "";
+      document.getElementById("senhaLogin").value = "";
+      document.getElementById("erroLogin").style.display = "none";
+
+    });
+
+    btnCadastro.addEventListener("click", () => {
+      btnCadastro.classList.add("active");
+      btnLogin.classList.remove("active");
+      formCadastro.classList.add("active");
+      formLogin.classList.remove("active");
+      document.getElementById("usuarioCadastro").value = "";
+      document.getElementById("senhaCadastro").value = "";
+      document.getElementById("erroLogin").style.display = "none";
+
+    });
+
+    // Login
+ document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("login-form");
+  const usuarioInput = document.getElementById("usuarioLogin");
+  const senhaInput = document.getElementById("senhaLogin");
+  const erro = document.getElementById("erroLogin");
+
+  erro.style.display = "none";
+
+  // Esconde erro sempre que o usuário digitar algo
+  usuarioInput.addEventListener("input", () => erro.style.display = "none");
+  senhaInput.addEventListener("input", () => erro.style.display = "none");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const usuario = usuarioInput.value.trim();
+    const senha = senhaInput.value.trim();
+
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+    const valido = usuarios.find(u => u.usuario === usuario && u.senha === senha);
+
+    if (valido) {
+      localStorage.setItem("usuarioLogado", usuario);
+      window.location.href = "app.html";
+    } else {
+      erro.style.display = "block";
+      senhaInput.value = "";
+      senhaInput.focus();
+    }
+  });
+});
+
+    // Cadastro
+    function showMsg(msg, elId, tipo = "ativo") {
+      const el = document.getElementById(elId);
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add(tipo);
+      el.style.display = "block";
+      setTimeout(() => {
+        el.textContent = "";
+        el.classList.remove(tipo);
+        el.style.display = "none";
+      }, 3000);
+    }
+
+    document.getElementById("cadastro-form").addEventListener("submit", function (e) {
       e.preventDefault();
+      const usuario = document.getElementById("usuarioCadastro").value.trim();
+      const senha = document.getElementById("senhaCadastro").value.trim();
+      const msg = document.getElementById("msgCadastro");
 
-      const usuario = document.getElementById("usuario").value.trim();
-      const senha = document.getElementById("senha").value.trim();
-      const erro = document.getElementById("erro");
+      let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
 
-      const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-      const valido = usuarios.find(u => u.usuario === usuario && u.senha === senha);
-
-      if (valido) {
-        localStorage.setItem("usuarioLogado", usuario);
-        window.location.href = "app.html";
-      } else {
-        erro.style.display = "block";
+      if (usuarios.some(u => u.usuario === usuario)) {
+        showMsg("Usuário já existe!", "msgCadastro", "erro");
+        return;
       }
+
+      usuarios.push({ usuario, senha });
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+      showMsg("Cadastro realizado com sucesso!", "msgCadastro", "ativo");
+      this.reset();
     });
   </script>
 </body>
