@@ -75,6 +75,14 @@ if (!localStorage.getItem("produtos")) {
 }
 
 // ---------------------
+// Salva hora de início do turno se não existir
+// ---------------------
+if (!localStorage.getItem("horaLogin")) {
+  const agora = new Date();
+  localStorage.setItem("horaLogin", agora.toISOString());
+}
+
+// ---------------------
 // Produtos
 // ---------------------
 let produtos = JSON.parse(localStorage.getItem("produtos") || "[]");
@@ -215,6 +223,15 @@ function gerarRelatorio() {
   const vendas = JSON.parse(localStorage.getItem("vendas") || "[]");
   const totalPorForma = {};
 
+ const segundoTrabalhador = (localStorage.getItem("segundoTrabalhador") || "").trim();
+
+ const horaLoginSalva = localStorage.getItem("horaLogin");
+  let horaLoginFormatada = "";
+  if (horaLoginSalva) {
+    const dataLogin = new Date(horaLoginSalva);
+    horaLoginFormatada = `${dataLogin.toLocaleDateString()} - ${dataLogin.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  }
+
   vendas.forEach((v) => {
     if (!totalPorForma[v.forma]) totalPorForma[v.forma] = 0;
     totalPorForma[v.forma] += v.valor;
@@ -229,9 +246,10 @@ function gerarRelatorio() {
     agrupado[v.produto].total += v.valor;
   });
 
-  // Montar a tabela HTML
-  let rel = `<h2>📊 Relatório de Vendas</h2>`;
-  rel += `<p><strong>Data:</strong> ${new Date().toLocaleDateString()}</p>`;
+// Montar a tabela HTML
+let rel = `<h2>📊 Relatório de Vendas</h2>`;
+rel += `<p><strong>Início do turno:</strong> ${horaLoginFormatada || "—"}</p>`;
+
   rel += `<table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width:100%;">`;
   rel += `<thead>
     <tr style="background-color: #00509e;">
@@ -277,6 +295,8 @@ rel += `</tbody></table>`;
   document.getElementById("relatorio").innerHTML = rel;
 }
 
+
+
 // ---------------------
 function showMsg(msg, elId) {
   const el = document.getElementById(elId);
@@ -287,11 +307,11 @@ function showMsg(msg, elId) {
 // Quando selecionar produto, preencher valor automaticamente
 function atualizarValorTotal() {
   const nomeSelecionado = document.getElementById("produto").value;
-  const quantidade = document.getElementById("quantidade").value;
+  const quantidade = Number(document.getElementById("quantidade").value || 0);
   const produtoEncontrado = produtos.find(p => p.nome.toLowerCase() === nomeSelecionado.toLowerCase());
 
   if (produtoEncontrado) {
-    const unit = produtoEncontrado.preco;
+    const unit = Number(produtoEncontrado.preco);
     const total = unit * quantidade;
 
     document.getElementById("valor").value = unit.toFixed(2);
@@ -310,76 +330,6 @@ document.getElementById("produto").addEventListener("input", atualizarValorTotal
 
 // Atualiza valor ao mudar a quantidade
 document.getElementById("quantidade").addEventListener("input", atualizarValorTotal);
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("btn-baixar-pdf").addEventListener("click", () => {
-    const vendas = JSON.parse(localStorage.getItem("vendas") || "[]");
-
-const agrupado = {};
-vendas.forEach(v => {
-  if (!agrupado[v.produto]) {
-    agrupado[v.produto] = { 
-      data: v.data, 
-      forma: v.forma, 
-      quantidade: 0, 
-      total: 0, 
-      unitario: v.valorUnitario 
-    };
-  }
-  agrupado[v.produto].quantidade += v.quantidade;
-  agrupado[v.produto].total += v.valor;
-});
-
-// Criar array de detalhes
-const detalhes = [["Data", "Forma", "Produto", "Quantidade", "Valor Unitário (R$)", "Valor Total (R$)"]];
-for (let prod in agrupado) {
-  const info = agrupado[prod];
-  detalhes.push([
-    info.data, 
-    info.forma, 
-    prod, 
-    info.quantidade, 
-    info.unitario.toFixed(2), 
-    info.total.toFixed(2)
-  ]);
-}
-
-// Totais por forma de pagamento
-const totais = {
-  "Cartão Débito": 0,
-  "Cartão Crédito": 0,
-  "PIX": 0,
-  "Dinheiro": 0
-};
-
-vendas.forEach(v => {
-  if (totais[v.forma] !== undefined) {
-    totais[v.forma] += v.valor;
-  }
-});
-
-
-    const totalGeral = Object.values(totais).reduce((s, v) => s + v, 0);
-
-    const resumo = [
-      ["Forma de Pagamento", "Valor Total (R$)"],
-      ["Cartão Débito", totais["Cartão Débito"].toFixed(2)],
-      ["Cartão Crédito", totais["Cartão Crédito"].toFixed(2)],
-      ["PIX", totais["PIX"].toFixed(2)],
-      ["Dinheiro", totais["Dinheiro"].toFixed(2)],
-      ["", ""],
-      ["Total Geral", totalGeral.toFixed(2)]
-    ];
-
-    const wb = XLSX.utils.book_new();
-    const ws1 = XLSX.utils.aoa_to_sheet(detalhes);
-    const ws2 = XLSX.utils.aoa_to_sheet(resumo);
-    XLSX.utils.book_append_sheet(wb, ws1, "Detalhamento");
-    XLSX.utils.book_append_sheet(wb, ws2, "Totais");
-
-    XLSX.writeFile(wb, "Relatorio_Cafe.xlsx");
-  });
-});
 
 // Inicia lista
 renderProdutos();
