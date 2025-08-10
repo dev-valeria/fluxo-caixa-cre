@@ -392,6 +392,19 @@ form button {
   cursor: pointer;
 }
 
+.voluntario {
+    background-color: #083366;
+    color: white;
+    margin: 6px;
+}
+
+.voluntario-cancelar {
+    background-color: #ddd;
+    color: #333;
+    margin: 6px;
+}
+
+
 /* Responsivo */
 @media (max-width: 768px) {
   .tabela-produtos {
