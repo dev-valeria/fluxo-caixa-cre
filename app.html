@@ -71,17 +71,22 @@
       </div>
     </div>
 
-    <div class="accordion">
-      <button class="accordion-btn">RELATÓRIO DE VENDAS</button>
-      <div class="panel">
-        <div id="relatorio" class="relatorio"></div>
-        <p class="hint">Clique para atualizar os registros de venda:</p>
-        <div class="acoes-relatorio">
-          <button id="btn-gerar-relatorio" class="btn-primario">📊 Atualizar Relatório</button>
-          <button id="btn-baixar-pdf" class="btn-primario">📥 Baixar Relatório (Excel)</button>
-        </div>
+      <div class="accordion">
+    <button class="accordion-btn">RELATÓRIO DE VENDAS</button>
+    <div class="panel">
+      <div class="linha">
+        <strong>Voluntários:</strong>
+        <span id="segundo-trabalhador-nome">—</span>
+        <button id="btn-abrir-modal-segundo" class="btn-primario" style="margin-left:8px;">👥 Definir</button>
+      </div>
+
+      <div id="relatorio" class="relatorio" style="margin-top:12px;"></div>
+      <p class="hint">Clique para atualizar os registros de venda:</p>
+      <div class="acoes-relatorio">
+        <button id="btn-gerar-relatorio" class="btn-primario">📊 Atualizar Relatório</button>
       </div>
     </div>
+  </div>
 
     <div class="accordion">
       <button class="accordion-btn">GERENCIAR PRODUTOS</button>
@@ -117,60 +122,136 @@
   </div>
 </div>
 
+<!-- Modal Segundo Trabalhador -->
+<div id="modal-segundo" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <p>Informe o nome dos voluntários:</p>
+    <input type="text" id="input-segundo-trabalhador" placeholder="Ex.: Maria" style="width:100%;padding:8px;margin:8px 0;">
+    <div class="modal-buttons">
+      <button id="salvar-segundo" class="voluntario">Salvar</button>
+      <button id="cancelar-segundo" class="voluntario-cancelar">Cancelar</button>
+    </div>
+  </div>
+</div>
+
   <!-- Scripts -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="script.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const usuario = localStorage.getItem("usuarioLogado");
+  const usuario = localStorage.getItem("usuarioLogado");
 
-      if (!usuario) {
-        window.location.href = "index.html";
-        return;
-      }
+  if (!usuario) {
+    window.location.href = "index.html";
+    return;
+  }
 
-      const saudacao = document.getElementById("bemvindo");
-      if (saudacao) {
-        saudacao.innerHTML = `<strong>Bem-vindo(a), ${usuario}!</strong>`;
-      }
+  const saudacao = document.getElementById("bemvindo");
+  if (saudacao) {
+    saudacao.innerHTML = `<strong>Bem-vindo(a), ${usuario}!</strong>`;
+  }
 
-      const logoutBtn = document.getElementById("btn-logout");
-const modalLogout = document.getElementById("modal-logout");
-const confirmarLogout = document.getElementById("confirmar-logout");
-const cancelarLogout = document.getElementById("cancelar-logout");
+  const logoutBtn = document.getElementById("btn-logout");
+  const modalLogout = document.getElementById("modal-logout");
+  const confirmarLogout = document.getElementById("confirmar-logout");
+  const cancelarLogout = document.getElementById("cancelar-logout");
 
-logoutBtn?.addEventListener("click", () => {
-  modalLogout.style.display = "flex"; // mostra o modal
-});
+  logoutBtn?.addEventListener("click", () => {
+    localStorage.removeItem("vendas");
+    modalLogout.style.display = "flex"; // mostra o modal
+  });
 
-confirmarLogout?.addEventListener("click", () => {
-  localStorage.removeItem("usuarioLogado");
-  window.location.href = "index.html";
-});
+  const relatorio = document.getElementById("relatorio");
+  if (relatorio) relatorio.innerHTML = "";
 
-cancelarLogout?.addEventListener("click", () => {
-  modalLogout.style.display = "none"; // esconde o modal
-});
+  const formVenda = document.getElementById("venda-form");
+  if (formVenda) formVenda.reset();
 
-      const buttons = document.querySelectorAll(".accordion-btn");
-      buttons.forEach((btn, index) => {
-        btn.addEventListener("click", () => {
-          buttons.forEach((otherBtn) => {
-            const otherPanel = otherBtn.nextElementSibling;
-            if (otherPanel !== btn.nextElementSibling) {
-              otherPanel.style.display = "none";
-            }
-          });
+  confirmarLogout?.addEventListener("click", () => {
+    localStorage.removeItem("usuarioLogado");
+    localStorage.removeItem("segundoTrabalhador"); // zera o nome
+    const spanSegundo = document.getElementById("segundo-trabalhador-nome");
+    const btnDefinir = document.getElementById("btn-abrir-modal-segundo");
+    if (spanSegundo) spanSegundo.textContent = "—";
+    window.location.href = "index.html";
+  });
 
-          const panel = btn.nextElementSibling;
-          panel.style.display = panel.style.display === "block" ? "none" : "block";
+  cancelarLogout?.addEventListener("click", () => {
+    modalLogout.style.display = "none"; // esconde o modal
+    const nome = (inputSegundo.value || "").trim();
+  });
 
-           if (index === 1 && panel.style.display === "block") {
-      renderProdutos();
+  // --- Segundo Trabalhador (Modal)
+  const btnAbrirSegundo = document.getElementById("btn-abrir-modal-segundo");
+  const modalSegundo = document.getElementById("modal-segundo");
+  const inputSegundo = document.getElementById("input-segundo-trabalhador");
+  const salvarSegundo = document.getElementById("salvar-segundo");
+  const cancelarSegundo = document.getElementById("cancelar-segundo");
+  const spanSegundo = document.getElementById("segundo-trabalhador-nome");
+
+  // Hidrata voluntários ao abrir/atualizar a página
+(function hydrateVoluntarios() {
+  const salvo = (localStorage.getItem("segundoTrabalhador") || "").trim();
+  if (salvo) {
+    if (spanSegundo) spanSegundo.textContent = salvo;
+    if (btnAbrirSegundo) btnAbrirSegundo.style.display = "none";
+  } else {
+    if (spanSegundo) spanSegundo.textContent = "—";
+    if (btnAbrirSegundo) btnAbrirSegundo.style.display = "inline-block";
+  }
+})();
+
+  btnAbrirSegundo?.addEventListener("click", () => {
+    inputSegundo.value = (localStorage.getItem("segundoTrabalhador") || "").trim();
+    modalSegundo.style.display = "flex";
+    setTimeout(() => inputSegundo.focus(), 0);
+  });
+
+  cancelarSegundo?.addEventListener("click", () => {
+    modalSegundo.style.display = "none";
+  });
+
+  salvarSegundo?.addEventListener("click", () => {
+    const nome = (inputSegundo.value || "").trim();
+    const btnDefinir = document.getElementById("btn-abrir-modal-segundo");
+    if (nome) {
+      localStorage.setItem("segundoTrabalhador", nome);
+      if (spanSegundo) spanSegundo.textContent = nome;
+      if (btnDefinir) btnDefinir.style.display = "none"; 
+    } else {
+      localStorage.removeItem("segundoTrabalhador");
+      if (spanSegundo) spanSegundo.textContent = "—";
+      if (btnDefinir) btnDefinir.style.display = "inline-block";
     }
-        });
+    modalSegundo.style.display = "none";
+  });
+
+  inputSegundo?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      salvarSegundo.click();
+    }
+  });
+
+  // Botões do accordion
+  const buttons = document.querySelectorAll(".accordion-btn");
+  buttons.forEach((btn, index) => {
+    btn.addEventListener("click", () => {
+      buttons.forEach((otherBtn) => {
+        const otherPanel = otherBtn.nextElementSibling;
+        if (otherPanel !== btn.nextElementSibling) {
+          otherPanel.style.display = "none";
+        }
       });
+
+      const panel = btn.nextElementSibling;
+      panel.style.display = panel.style.display === "block" ? "none" : "block";
+
+      if (index === 1 && panel.style.display === "block") {
+        renderProdutos();
+      }
     });
-  </script>
+  });
+});
+    </script>
 </body>
 </html>
