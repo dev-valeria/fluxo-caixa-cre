@@ -123,6 +123,7 @@
 
     if (valido) {
       localStorage.setItem("usuarioLogado", usuario);
+      localStorage.setItem("horaLogin", new Date().toISOString());
       window.location.href = "app.html";
     } else {
       erro.style.display = "block";
